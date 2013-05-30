@@ -147,6 +147,9 @@
               {{ form.state }} {{ form.state.label_tag }}
             </div>
           </div>
+          {% if unit.hasplural %}
+          <a target="_blank" class="check" href="https://translations.launchpad.net/+languages/{{ language.code }}" tabindex="15">Click here for information about what each Plural Form represents</a>
+          {% endif %}
           <!-- Translation -->
           <div id="orig{{ unit.index }}" class="translate-translation" lang="{{ LANGUAGE_CODE }}" dir="{% locale_dir %}">
             {% if unit.submitted_by %}
