@@ -69,6 +69,23 @@ def gentopstats_language(language):
         cache.set(key, result, settings.CACHE_MIDDLEWARE_SECONDS * 2)
     return result
 
+def gentopstats_language_full(language):
+    """Generate the entire list of translators for a given language
+    The output of this function looks something like this:
+      {'data':        [],
+       'headerlabel': u'Submissions'}]
+    """
+    key = iri_to_uri("%s:gentopstats" % language.pootle_path)
+    result = cache.get(key)
+    if result is None:
+        sub    = group_by_sort(User.objects.filter(pootleprofile__submission__translation_project__language=language),
+                                   'pootleprofile__submission', ['username','first_name','last_name'])
+
+        result = map(None, sub)
+        cache.set(key, result, settings.CACHE_MIDDLEWARE_SECONDS * 2)
+    return result
+
+
 def gentopstats_project(project):
     """Generate the top contributor stats to be displayed
     for an entire Pootle installation, a language or a project.

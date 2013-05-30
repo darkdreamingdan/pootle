@@ -47,7 +47,7 @@ from pootle_store.fields import (TranslationStoreField, MultiStringField,
 from pootle_store.filetypes import factory_classes, is_monolingual
 from pootle_store.util import (calculate_stats, empty_quickstats,
                                OBSOLETE, UNTRANSLATED, FUZZY, TRANSLATED)
-
+from pootle_app.views.top_stats import gentopstats_language_full
 
 #
 # Store States
@@ -1646,6 +1646,24 @@ class Store(models.Model, base.TranslationStore):
             else:
                 #FIXME: maybe insert settings.TITLE or domain here?
                 headerupdates['Last_Translator'] = 'Anonymous Pootle User'
+            
+            (all_translators,delimiter) = "",""
+            for user in gentopstats_language_full(language):
+                print(user)
+                if user['username'] == "nobody":
+                    continue
+                credit_str = delimiter
+                if user['first_name'] and user['last_name']:
+                    credit_str += ('%s "%s" %s' % \
+                        ( user['first_name'], user['username'],
+                          user['last_name'] ) ).replace(';','')
+                else:
+                    credit_str += user['username'].replace(';','')
+                all_translators += credit_str
+                delimiter = "; "
+            
+            headerupdates['Translators'] = all_translators
+                
             disk_store.updateheader(add=True, **headerupdates)
 
             if language.nplurals and language.pluralequation:

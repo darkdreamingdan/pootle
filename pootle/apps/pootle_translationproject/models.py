@@ -217,6 +217,8 @@ class TranslationProject(models.Model):
                        conservative=conservative, create=False,
                        skip_missing=skip_missing,
                        modified_since=modified_since)
+            store.update_store_header()
+            store.file.savestore()
 
     @getfromcache
     def get_mtime(self):
